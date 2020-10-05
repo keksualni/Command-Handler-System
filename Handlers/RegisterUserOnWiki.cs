@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using CommandsAndHandlers.Commands;
 
 namespace CommandsAndHandlers.Handlers
@@ -7,7 +8,9 @@ namespace CommandsAndHandlers.Handlers
     {
         public Task HandleAsync(RegisterUserCommand command)
         {
-            throw new System.NotImplementedException();
+            Console.WriteLine($"{command.Name} registered on the Wiki!");
+
+            return Task.CompletedTask;
         }
     }
 }

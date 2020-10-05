@@ -1,4 +1,6 @@
 ﻿using System;
+using CommandsAndHandlers.Dispatcher;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace CommandsAndHandlers
@@ -7,13 +9,15 @@ namespace CommandsAndHandlers
     {
         public static void Main(string[] args)
         {
-            IHost host = CreateHostBuilder().Build();
+            CreateHostBuilder().Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder() => new HostBuilder()
             .ConfigureServices((hostContext, services) =>
             {
-                DispatcherInitializer.Initialize(services);
+                services.AddCommandDispatcher();
+
+                services.AddHostedService<ConsoleUIService>();
             })
             .UseConsoleLifetime();
     }
