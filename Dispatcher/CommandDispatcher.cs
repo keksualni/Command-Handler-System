@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CommandsAndHandlers.Commands;
 using CommandsAndHandlers.Handlers;
 
 namespace CommandsAndHandlers.Dispatcher
@@ -16,8 +17,10 @@ namespace CommandsAndHandlers.Dispatcher
         }
 
 
-        public Task DispatchAsync<TCommand>(TCommand command) where TCommand: class
+        public Task DispatchAsync<TCommand>(TCommand command) where TCommand : Command
         {
+            command.FillCommandValues();
+
             Type handlerType = typeof(ICommandHandlerAsync<>).MakeGenericType(command.GetType());
 
             if (_commandHandlerDictionary.TryGetValue(handlerType, out IEnumerable<object> handlers))

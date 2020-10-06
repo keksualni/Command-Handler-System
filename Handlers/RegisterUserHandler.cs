@@ -8,7 +8,7 @@ namespace CommandsAndHandlers.Handlers
     {
         public Task HandleAsync(RegisterUserCommand command)
         {
-            Console.WriteLine($"{command.UserFirstName} registered!");
+            Console.WriteLine($"{command.UserFirstName} {command.UserLastName} registered!");
 
             return Task.CompletedTask;
         }

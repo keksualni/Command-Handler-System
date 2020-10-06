@@ -14,7 +14,14 @@ namespace CommandsAndHandlers.Dispatcher
     {
         public static void AddCommandDispatcher(this IServiceCollection services)
         {
-            var commandHandlerConcurrentStore = new Dictionary<Type, IEnumerable<object>>();
+            bool CheckCommandType(Type type)
+            {
+                return type.IsSubclassOf(typeof(Command))
+                       && type.GetCustomAttributes().Any(a => a is CommandAttribute);
+            }
+
+
+            var commandHandlerConcurrentStore = new ConcurrentDictionary<Type, IEnumerable<object>>();
 
             Type[] handlers = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(x => x.IsClass
@@ -27,24 +34,21 @@ namespace CommandsAndHandlers.Dispatcher
                 Type handlerCommandInterface = handler
                     .GetInterfaces()
                     .FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(ICommandHandlerAsync<>)
-                        && i.GetGenericArguments()[0].IsAssignableFrom(typeof(Command))
+                        && CheckCommandType(i.GetGenericArguments()[0])
                     );
 
                 if (handlerCommandInterface == null)
                 {
-                    return;;
+                    return;
                 }
 
-                if (commandHandlerConcurrentStore.TryGetValue(handlerCommandInterface, out IEnumerable<object> list))
-                {
-                    commandHandlerConcurrentStore[handlerCommandInterface] = list.Concat(new [] { Activator.CreateInstance(handler) });
-                }
-                else
-                {
-                    object[] newHandlersList = new [] { Activator.CreateInstance(handler) };
+                object[] arrayWithNewHandler = new [] { Activator.CreateInstance(handler) };
 
-                    commandHandlerConcurrentStore[handlerCommandInterface] = newHandlersList.AsEnumerable();
-                }
+                commandHandlerConcurrentStore.AddOrUpdate(
+                    handlerCommandInterface,
+                    arrayWithNewHandler.AsEnumerable(),
+                    (key, oldValue) => oldValue.Concat(arrayWithNewHandler)
+                );
             });
 
             var commandHandlerStore = new Dictionary<Type, IEnumerable<object>>(commandHandlerConcurrentStore);

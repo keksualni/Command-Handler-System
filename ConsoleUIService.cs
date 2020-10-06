@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CommandsAndHandlers.Commands;
@@ -11,12 +12,18 @@ namespace CommandsAndHandlers
     {
         private readonly IHostApplicationLifetime _applicationLifetime;
         private readonly CommandDispatcher _commandDispatcher;
+        private readonly Dictionary<string, Type> _commandsDictionary;
 
 
-        public ConsoleUIService(IHostApplicationLifetime applicationLifetime, CommandDispatcher commandDispatcher)
+        public ConsoleUIService(
+            IHostApplicationLifetime applicationLifetime,
+            CommandDispatcher commandDispatcher,
+            Dictionary<string, Type> commandsDictionary
+        )
         {
             _applicationLifetime = applicationLifetime;
             _commandDispatcher = commandDispatcher;
+            _commandsDictionary = commandsDictionary;
         }
 
 
@@ -38,7 +45,7 @@ namespace CommandsAndHandlers
         {
             Console.WriteLine("-----------------------------");
             Console.WriteLine("Application stared!");
-            Console.WriteLine("Press 'C' to stop application");
+            Console.WriteLine("Press 'Ctrl + C' to stop application");
             Console.WriteLine("-----------------------------\n\n\n\n");
 
             StartCommandLineObserving();
@@ -46,7 +53,7 @@ namespace CommandsAndHandlers
 
         private void OnStopping()
         {
-            Console.WriteLine("Application is stopping...\n\n\n\n");
+            Console.WriteLine("\n\n\n\nApplication is stopping...\n\n\n\n");
         }
 
         private void OnStopped()
@@ -58,13 +65,21 @@ namespace CommandsAndHandlers
 
         private void StartCommandLineObserving()
         {
-            Console.Write("Enter the command: ");
-            string command = Console.ReadLine();
-
-            if (command == "register")
+            string commandExecuteName;
+            do
             {
-                _commandDispatcher.DispatchAsync(new RegisterUserCommand() { UserFirstName  = "Nikita" });
-            }
+                Console.Write("Enter the command: ");
+                commandExecuteName = Console.ReadLine();
+
+                if (_commandsDictionary.TryGetValue(commandExecuteName, out Type command))
+                {
+                    _commandDispatcher.DispatchAsync(Activator.CreateInstance(command) as Command);
+                }
+                else
+                {
+                    Console.WriteLine($"No command with name ${commandExecuteName} was found!");
+                }
+            } while (commandExecuteName != "exit");
         }
     }
 }
