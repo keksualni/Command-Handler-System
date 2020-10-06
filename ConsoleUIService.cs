@@ -41,14 +41,7 @@ namespace CommandsAndHandlers
             Console.WriteLine("Press 'C' to stop application");
             Console.WriteLine("-----------------------------\n\n\n\n");
 
-
-            Console.Write("Enter the command: ");
-            string command = Console.ReadLine();
-
-            if (command == "register")
-            {
-                _commandDispatcher.DispatchAsync(new RegisterUserCommand() { Name  = "Nikita" });
-            }
+            StartCommandLineObserving();
         }
 
         private void OnStopping()
@@ -61,6 +54,17 @@ namespace CommandsAndHandlers
             Console.WriteLine("-----------------------------");
             Console.WriteLine("Application stopped!");
             Console.WriteLine("-----------------------------");
+        }
+
+        private void StartCommandLineObserving()
+        {
+            Console.Write("Enter the command: ");
+            string command = Console.ReadLine();
+
+            if (command == "register")
+            {
+                _commandDispatcher.DispatchAsync(new RegisterUserCommand() { UserFirstName  = "Nikita" });
+            }
         }
     }
 }

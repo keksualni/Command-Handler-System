@@ -1,7 +1,7 @@
 ﻿namespace CommandsAndHandlers.Commands
 {
-    public class GetCommandsListCommand
+    [Command("help")]
+    public class GetCommandsListCommand : Command
     {
-        
     }
 }

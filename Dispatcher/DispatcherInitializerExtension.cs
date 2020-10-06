@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using CommandsAndHandlers.Commands;
 using CommandsAndHandlers.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,11 +26,18 @@ namespace CommandsAndHandlers.Dispatcher
             {
                 Type handlerCommandInterface = handler
                     .GetInterfaces()
-                    .First(i => i.GetGenericTypeDefinition() == typeof(ICommandHandlerAsync<>));
+                    .FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(ICommandHandlerAsync<>)
+                        && i.GetGenericArguments()[0].IsAssignableFrom(typeof(Command))
+                    );
+
+                if (handlerCommandInterface == null)
+                {
+                    return;;
+                }
 
                 if (commandHandlerConcurrentStore.TryGetValue(handlerCommandInterface, out IEnumerable<object> list))
                 {
-                    list = list.Concat(new [] { Activator.CreateInstance(handler) });
+                    commandHandlerConcurrentStore[handlerCommandInterface] = list.Concat(new [] { Activator.CreateInstance(handler) });
                 }
                 else
                 {

@@ -8,7 +8,7 @@ namespace CommandsAndHandlers.Handlers
     {
         public Task HandleAsync(RegisterUserCommand command)
         {
-            Console.WriteLine($"{command.Name} registered on the Wiki!");
+            Console.WriteLine($"{command.UserFirstName} registered on the Wiki!");
 
             return Task.CompletedTask;
         }
