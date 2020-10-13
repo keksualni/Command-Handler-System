@@ -23,7 +23,7 @@ namespace CommandsAndHandlers.Commands
 
         public override void Execute()
         {
-            _commandDispatcher.DispatchAsync(this);
+            CommandDispatcher.Dispatch(this);
         }
     }
 }

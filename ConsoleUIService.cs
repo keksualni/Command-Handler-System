@@ -66,7 +66,7 @@ namespace CommandsAndHandlers
         private void StartCommandLineObserving()
         {
             string commandExecuteName;
-            do
+            while(true)
             {
                 Console.Write("\nEnter the command: ");
                 commandExecuteName = Console.ReadLine();
@@ -77,11 +77,15 @@ namespace CommandsAndHandlers
 
                     commandToExecute?.Execute();
                 }
-                else
+                else if (commandExecuteName != "exit")
                 {
                     Console.WriteLine($"No command with name {commandExecuteName} was found!");
                 }
-            } while (commandExecuteName != "exit");
+                else
+                {
+                    break;
+                }
+            }
 
             Environment.Exit(-1);
         }

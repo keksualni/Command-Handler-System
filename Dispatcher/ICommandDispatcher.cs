@@ -5,6 +5,6 @@ namespace CommandsAndHandlers.Dispatcher
 {
     public interface ICommandDispatcher
     {
-        public Task DispatchAsync<TCommand>(TCommand command) where TCommand : Command;
+        public void Dispatch<TCommand>(TCommand command) where TCommand : Command;
     }
 }

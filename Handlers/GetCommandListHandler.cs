@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CommandsAndHandlers.Commands;
 using CommandsAndHandlers.Models;
 
 namespace CommandsAndHandlers.Handlers
 {
-    public class GetCommandListHandler : ICommandHandlerAsync<GetCommandListCommand>
+    public class GetCommandListHandler : ICommandHandler<GetCommandListCommand>
     {
         private readonly IReadOnlyCollection<CommandInfo> _commandInfos;
 

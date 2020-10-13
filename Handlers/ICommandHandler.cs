@@ -2,7 +2,7 @@
 
 namespace CommandsAndHandlers.Handlers
 {
-    public interface ICommandHandlerAsync<in TCommand> where TCommand : class
+    public interface ICommandHandler<in TCommand> where TCommand : class
     {
         void Handle(TCommand command);
     }

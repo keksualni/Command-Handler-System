@@ -26,14 +26,14 @@ namespace CommandsAndHandlers.Dispatcher
             Type[] handlers = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(x => x.IsClass
                     && x.GetInterfaces().Any(i => i.IsGenericType
-                        && i.GetGenericTypeDefinition() == typeof(ICommandHandlerAsync<>)))
+                        && i.GetGenericTypeDefinition() == typeof(ICommandHandler<>)))
                 .ToArray();
 
             foreach (Type handler in handlers)
             {
                 Type handlerCommandInterface = handler
                     .GetInterfaces()
-                    .FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(ICommandHandlerAsync<>)
+                    .FirstOrDefault(i => i.GetGenericTypeDefinition() == typeof(ICommandHandler<>)
                         && CheckCommandType(i.GetGenericArguments()[0])
                     );
 
@@ -47,7 +47,7 @@ namespace CommandsAndHandlers.Dispatcher
 
             Type[] descriptors = services
                 .Where(t => t.ServiceType.IsGenericType &&
-                            t.ServiceType.GetGenericTypeDefinition() == typeof(ICommandHandlerAsync<>))
+                            t.ServiceType.GetGenericTypeDefinition() == typeof(ICommandHandler<>))
                 .Select(x => x.ServiceType)
                 .Distinct()
                 .ToArray();

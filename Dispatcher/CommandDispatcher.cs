@@ -17,17 +17,17 @@ namespace CommandsAndHandlers.Dispatcher
         }
 
 
-        public Task DispatchAsync<TCommand>(TCommand command) where TCommand : Command
+        public void Dispatch<TCommand>(TCommand command) where TCommand : Command
         {
             command.FillCommandValues();
 
-            Type handlerType = typeof(ICommandHandlerAsync<>).MakeGenericType(command.GetType());
+            Type handlerType = typeof(ICommandHandler<>).MakeGenericType(command.GetType());
 
             if (_commandHandlerDictionary.TryGetValue(handlerType, out IEnumerable<object> handlers))
             {
                 Parallel.ForEach(handlers, handler =>
                 {
-                    var concreteHandler = handler as ICommandHandlerAsync<TCommand>;
+                    var concreteHandler = handler as ICommandHandler<TCommand>;
 
                     concreteHandler?.Handle(command);
                 });
@@ -36,8 +36,6 @@ namespace CommandsAndHandlers.Dispatcher
             {
                 throw new AggregateException("No handler registered");
             }
-
-            return Task.CompletedTask;
         }
     }
 }

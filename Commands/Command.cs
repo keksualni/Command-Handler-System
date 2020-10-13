@@ -5,12 +5,12 @@ namespace CommandsAndHandlers.Commands
 {
     public abstract class Command
     {
-        protected readonly ICommandDispatcher _commandDispatcher;
+        protected readonly ICommandDispatcher CommandDispatcher;
 
 
         protected Command(ICommandDispatcher commandDispatcher)
         {
-            this._commandDispatcher = commandDispatcher;
+            this.CommandDispatcher = commandDispatcher;
         }
 
 
