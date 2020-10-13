@@ -68,7 +68,7 @@ namespace CommandsAndHandlers
             string commandExecuteName;
             do
             {
-                Console.Write("Enter the command: ");
+                Console.Write("\nEnter the command: ");
                 commandExecuteName = Console.ReadLine();
 
                 if (_commandsDictionary.TryGetValue(commandExecuteName, out Type command))
