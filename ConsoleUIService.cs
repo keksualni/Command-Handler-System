@@ -79,9 +79,11 @@ namespace CommandsAndHandlers
                 }
                 else
                 {
-                    Console.WriteLine($"No command with name ${commandExecuteName} was found!");
+                    Console.WriteLine($"No command with name {commandExecuteName} was found!");
                 }
             } while (commandExecuteName != "exit");
+
+            Environment.Exit(-1);
         }
     }
 }
