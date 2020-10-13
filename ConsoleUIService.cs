@@ -11,13 +11,13 @@ namespace CommandsAndHandlers
     public class ConsoleUIService : IHostedService
     {
         private readonly IHostApplicationLifetime _applicationLifetime;
-        private readonly CommandDispatcher _commandDispatcher;
+        private readonly ICommandDispatcher _commandDispatcher;
         private readonly Dictionary<string, Type> _commandsDictionary;
 
 
         public ConsoleUIService(
             IHostApplicationLifetime applicationLifetime,
-            CommandDispatcher commandDispatcher,
+            ICommandDispatcher commandDispatcher,
             Dictionary<string, Type> commandsDictionary
         )
         {
@@ -73,7 +73,9 @@ namespace CommandsAndHandlers
 
                 if (_commandsDictionary.TryGetValue(commandExecuteName, out Type command))
                 {
-                    _commandDispatcher.DispatchAsync(Activator.CreateInstance(command) as Command);
+                    var commandToExecute = Activator.CreateInstance(command, _commandDispatcher) as Command;
+
+                    commandToExecute?.Execute();
                 }
                 else
                 {

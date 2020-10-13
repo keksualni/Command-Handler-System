@@ -6,11 +6,9 @@ namespace CommandsAndHandlers.Handlers
 {
     public class RegisterUserOnForum : ICommandHandlerAsync<RegisterUserCommand>
     {
-        public Task HandleAsync(RegisterUserCommand command)
+        public void Handle(RegisterUserCommand command)
         {
             Console.WriteLine($"{command.UserFirstName} {command.UserLastName} registered on the forum!");
-
-            return Task.CompletedTask;
         }
     }
 }

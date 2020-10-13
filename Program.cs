@@ -20,7 +20,6 @@ namespace CommandsAndHandlers
                 services.AddCommandDispatcher();
 
                 services.AddHostedService<ConsoleUIService>();
-            })
-            .UseConsoleLifetime();
+            });
     }
 }

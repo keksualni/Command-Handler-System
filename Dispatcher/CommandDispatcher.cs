@@ -6,7 +6,7 @@ using CommandsAndHandlers.Handlers;
 
 namespace CommandsAndHandlers.Dispatcher
 {
-    public class CommandDispatcher
+    public class CommandDispatcher : ICommandDispatcher
     {
         private readonly Dictionary<Type, IEnumerable<object>> _commandHandlerDictionary;
 
@@ -29,7 +29,7 @@ namespace CommandsAndHandlers.Dispatcher
                 {
                     var concreteHandler = handler as ICommandHandlerAsync<TCommand>;
 
-                    concreteHandler?.HandleAsync(command).Start();
+                    concreteHandler?.Handle(command);
                 });
             }
             else

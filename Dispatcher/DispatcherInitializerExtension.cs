@@ -29,7 +29,7 @@ namespace CommandsAndHandlers.Dispatcher
                         && i.GetGenericTypeDefinition() == typeof(ICommandHandlerAsync<>)))
                 .ToArray();
 
-            Parallel.ForEach(handlers, handler =>
+            foreach (Type handler in handlers)
             {
                 Type handlerCommandInterface = handler
                     .GetInterfaces()
@@ -39,20 +39,32 @@ namespace CommandsAndHandlers.Dispatcher
 
                 if (handlerCommandInterface == null)
                 {
-                    return;
+                    continue;
                 }
 
-                object[] arrayWithNewHandler = new [] { Activator.CreateInstance(handler) };
+                services.AddScoped(handlerCommandInterface, handler);
+            }
 
+            Type[] descriptors = services
+                .Where(t => t.ServiceType.IsGenericType &&
+                            t.ServiceType.GetGenericTypeDefinition() == typeof(ICommandHandlerAsync<>))
+                .Select(x => x.ServiceType)
+                .Distinct()
+                .ToArray();
+
+            ServiceProvider provider = services.BuildServiceProvider();
+
+            Parallel.ForEach(descriptors, descriptor =>
+            {
                 commandHandlerConcurrentStore.AddOrUpdate(
-                    handlerCommandInterface,
-                    arrayWithNewHandler.AsEnumerable(),
-                    (key, oldValue) => oldValue.Concat(arrayWithNewHandler)
+                    descriptor,
+                    provider.GetServices(descriptor),
+                    (key, oldValue) => provider.GetServices(descriptor)
                 );
             });
 
             var commandHandlerStore = new Dictionary<Type, IEnumerable<object>>(commandHandlerConcurrentStore);
-            services.AddSingleton(new CommandDispatcher(commandHandlerStore));
+            services.AddSingleton<ICommandDispatcher>(new CommandDispatcher(commandHandlerStore));
         }
     }
 }

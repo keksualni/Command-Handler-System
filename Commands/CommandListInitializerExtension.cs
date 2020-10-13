@@ -12,7 +12,8 @@ namespace CommandsAndHandlers.Commands
     {
         public static void AddCommandList(this IServiceCollection services)
         {
-            var commands = Assembly.GetExecutingAssembly().GetTypes()
+            IEnumerable<Type> commands = Assembly.GetExecutingAssembly()
+                .GetTypes()
                 .Where(t => t.GetCustomAttributes()
                     .Any(a => a is CommandAttribute)
                 )
